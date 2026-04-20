@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интеллектуалды Хаб: Қ. Мұханбетқалиұлы</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap');
+        
+        body { 
+    font-family: 'Montserrat', sans-serif; 
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('syrym.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    color: #1e293b; 
+}
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .gradient-header { background: transparent; }
+        .hub-card { 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    cursor: pointer;
+    /* Міне, осы жерді қосамыз: */
+    background: rgba(255, 255, 255, 0.8) !important; 
+    backdrop-filter: blur(8px);
+}
+        .hub-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .content-section { display: none; animation: fadeIn 0.5s ease-out; }
+        .content-section.active { display: block; }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; scale: 0.95; } 
+            to { opacity: 1; scale: 1; } 
+        }
+
+        .correct-ans { border-color: #10b981; background-color: #f0fdf4; }
+        .sortable-item { cursor: move; transition: background 0.2s; }
+        .sortable-item:active { cursor: grabbing; }
+
+        .map-container { position: relative; width: 100%; height: 100%; }
+        .map-marker {
+            position: absolute;
+            top: 40%;
+            left: 30%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        .marker-label {
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            margin-bottom: 4px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="gradient-header text-white py-10 px-6 shadow-xl relative text-center">
+        <h1 class="font-serif text-4xl md:text-5xl mb-2">«Тар кезең» тарихи хабы</h1>
+        <p class="text-emerald-100 text-lg font-light">Бөлімдерді еркін таңдап, тапсырмаларды орындаңыз</p>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-10 px-6">
+        
+        <!-- HUB MENU (Dashboard) -->
+        <div id="hub-menu" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div onclick="showSection('bio')" class="hub-card bg-white p-6 rounded-3xl border-b-4 border-emerald-600 shadow-sm">
+                <div class="text-4xl mb-4">📖</div>
+                <h3 class="font-bold text-xl text-emerald-900 mb-2">Өмірбаяны</h3>
+                <p class="text-gray-500 text-sm">Туған жылы, жері және білімі туралы деректер.</p>
+            </div>
+            <!-- Card 2 -->
+            <div onclick="showSection('career')" class="hub-card bg-white p-6 rounded-3xl border-b-4 border-blue-600 shadow-sm">
+                <div class="text-4xl mb-4">💼</div>
+                <h3 class="font-bold text-xl text-blue-900 mb-2">Қызмет жолы</h3>
+                <p class="text-gray-500 text-sm">Редакторлық қызметтерді реттеу тапсырмасы.</p>
+            </div>
+            <!-- Card 3 -->
+            <div onclick="showSection('novel')" class="hub-card bg-white p-6 rounded-3xl border-b-4 border-amber-600 shadow-sm">
+                <div class="text-4xl mb-4">⚔️</div>
+                <h3 class="font-bold text-xl text-amber-900 mb-2">Роман әлемі</h3>
+                <p class="text-gray-500 text-sm">Кейіпкерлерді талдау және эссе жазу.</p>
+            </div>
+            <!-- Card 4 -->
+            <div onclick="showSection('geo')" class="hub-card bg-white p-6 rounded-3xl border-b-4 border-purple-600 shadow-sm">
+                <div class="text-4xl mb-4">🗺️</div>
+                <h3 class="font-bold text-xl text-purple-900 mb-2">География</h3>
+                <p class="text-gray-500 text-sm">Көтеріліс картасы мен жер-су атаулары.</p>
+            </div>
+            <!-- Card 5 -->
+            <div onclick="showSection('style')" class="hub-card bg-white p-6 rounded-3xl border-b-4 border-rose-600 shadow-sm">
+                <div class="text-4xl mb-4">🖋️</div>
+                <h3 class="font-bold text-xl text-rose-900 mb-2">Тілдік талдау</h3>
+                <p class="text-gray-500 text-sm">Автор стилі мен мағыналық тіркестер.</p>
+            </div>
+        </div>
+
+        <!-- SECTIONS -->
+
+        <!-- Section: Bio -->
+        <section id="section-bio" class="content-section bg-white rounded-3xl p-8 shadow-xl border border-emerald-50">
+            <button onclick="goBack()" class="text-emerald-600 font-bold mb-6 flex items-center gap-2">← Басты мәзір</button>
+            <h2 class="font-serif text-3xl text-emerald-900 mb-6">Жазушының өмір жолы</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <p class="font-semibold text-lg text-gray-700">1. Қажығали Мұханбетқалиұлының туған жерін анықтаңыз:</p>
+                    <div class="grid gap-3">
+                        <button onclick="markCorrect(this)" class="p-4 border rounded-xl hover:bg-emerald-50 text-left transition">Ақтөбе обл, Байғанин ауд, Қызылбұлақ ауылы</button>
+                        <button onclick="this.classList.add('bg-red-50', 'border-red-200')" class="p-4 border rounded-xl hover:bg-red-50 text-left transition">Батыс Қазақстан обл, Сырым ауданы</button>
+                    </div>
+                    <div class="mt-4">
+                        <p class="font-semibold text-lg text-gray-700 mb-2">2. Университетте қай факультетті бітірді?</p>
+                        <input type="text" id="uni-input" class="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Жауабыңызды жазыңыз...">
+                        <button onclick="checkUni()" class="mt-2 bg-emerald-600 text-white px-6 py-2 rounded-lg">Тексеру</button>
+                    </div>
+                </div>
+                <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 self-start">
+                    <h4 class="font-bold text-emerald-800 mb-2">Био-дерек:</h4>
+                    <p class="text-sm leading-relaxed">1942 жылы 8 желтоқсанда туған. 1965 жылы ҚазМҰУ-дың филология факультетін үздік тәмамдады.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Career (Fixed Order Task) -->
+        <section id="section-career" class="content-section bg-white rounded-3xl p-8 shadow-xl border border-blue-50">
+            <button onclick="goBack()" class="text-blue-600 font-bold mb-6">← Басты мәзір</button>
+            <h2 class="font-serif text-3xl text-blue-900 mb-6">Қызмет жолын реттеңіз</h2>
+            <p class="mb-6 text-gray-600">Мәтін бойынша жазушының еңбек жолындағы мекемелерді бірінен соң бірін ретпен қойыңыз (Drag & Drop):</p>
+            
+            <div id="career-list" class="space-y-3 mb-8">
+                <div draggable="true" class="sortable-item p-4 bg-slate-50 border rounded-xl flex items-center gap-4" data-id="1">
+                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">?</span>
+                    <p>Ақтөбе облыстық телевизия және радио комитеті (Редактор)</p>
+                </div>
+                <div draggable="true" class="sortable-item p-4 bg-slate-50 border rounded-xl flex items-center gap-4" data-id="2">
+                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">?</span>
+                    <p>Облыстық «Коммунизм жолы» газеті (Әдеби қызметкер)</p>
+                </div>
+                <div draggable="true" class="sortable-item p-4 bg-slate-50 border rounded-xl flex items-center gap-4" data-id="3">
+                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">?</span>
+                    <p>Алматы: «Қазақстан» баспасы, «Жұлдыз» журналы, «Қазақ әдебиеті»</p>
+                </div>
+                <div draggable="true" class="sortable-item p-4 bg-slate-50 border rounded-xl flex items-center gap-4" data-id="4">
+                    <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold">?</span>
+                    <p>«Жаңа фильм» журналы (Бас редактор)</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button onclick="checkCareerOrder()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Тексеру</button>
+                <div id="career-feedback" class="flex-1 p-3 rounded-xl hidden"></div>
+            </div>
+        </section>
+
+        <!-- Section: Novel (Analysis Task) -->
+        <section id="section-novel" class="content-section bg-white rounded-3xl p-8 shadow-xl border border-amber-50">
+            <button onclick="goBack()" class="text-amber-600 font-bold mb-6">← Басты мәзір</button>
+            <h2 class="font-serif text-3xl text-amber-900 mb-6">Сырым батырдың тұлғалық болмысы</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="bg-amber-50 p-6 rounded-2xl border-l-8 border-amber-500 italic text-gray-700">
+                        "...Бұл би Сырым емес, батыр Сырым-ды. Кеше ғана қасында тұрған мына кісілерді өз үйінде ту бие сойып қонақ қылған... осы Сырым ба, жоқ әлде басқа біреу ме?"
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-2">Тапсырма:</h4>
+                        <p class="text-gray-600 mb-4">Автордың "Би Сырым" және "Батыр Сырым" деп екіге бөлуінің сыры неде? Төмендегі алаңға өз талдауыңызды жазыңыз:</p>
+                        <textarea id="essay-area" class="w-full h-48 p-4 border-2 border-amber-100 rounded-2xl focus:border-amber-400 outline-none resize-none transition" placeholder="Сырымның мінезіндегі өзгерістің себептерін сипаттаңыз..."></textarea>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span id="char-count" class="text-xs text-gray-400">0 сөз жазылды</span>
+                            <button onclick="saveAnalysis()" class="bg-amber-600 text-white px-6 py-2 rounded-lg hover:bg-amber-700">Сақтау</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="font-bold text-amber-900 uppercase text-sm tracking-widest">Көмекші тіректер:</h4>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="font-bold text-sm mb-1">Би бейнесі:</p>
+                        <p class="text-xs text-gray-500">Жомарттық, қонақжайлылық, парасаттылық, ағайынға деген мейірім.</p>
+                    </div>
+                    <div class="p-4 bg-slate-900 text-emerald-400 rounded-xl">
+                        <p class="font-bold text-sm mb-1">Батыр бейнесі:</p>
+                        <p class="text-xs text-emerald-100/70">Сес, суық қабақ, рух, жігер, жұртты бағындыратын ерік-жігер.</p>
+                    </div>
+                    <div class="p-6 border-2 border-dashed border-amber-200 rounded-2xl">
+                        <h5 class="font-bold text-amber-800 mb-2">Зерттеуші кеңесі:</h5>
+                        <p class="text-xs italic text-gray-500">Сырымның "түсі сұп-суық" болуы оның жеке басының қамы емес, ел тағдыры шешілетін "тар кезеңдегі" жауапкершілігінен туындағанына мән беріңіз.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Geo -->
+        <section id="section-geo" class="content-section bg-white rounded-3xl p-8 shadow-xl border border-purple-50">
+            <button onclick="goBack()" class="text-purple-600 font-bold mb-6">← Басты мәзір</button>
+            <h2 class="font-serif text-3xl text-purple-900 mb-6">Көтеріліс географиясы</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-slate-100 aspect-video rounded-2xl border-2 border-purple-100 overflow-hidden relative">
+                    <div class="map-container">
+                        <div class="map-marker">
+                            <span class="marker-label">Батыс Қазақстан аумағы</span>
+                            <span class="text-3xl drop-shadow-md">📍</span>
+                        </div>
+                        <img src="https://avatars.mds.yandex.net/i?id=05ddf026a75f149fa54fa0a9f67de58e7682fd92-4373853-images-thumbs&n=13" alt="Сырым батыр көтерілісінің картасы" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center w-full h-full\'><span class=\'text-gray-400\'>[Сырым батыр көтерілісінің картасы]</span></div>'">
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <p class="font-semibold">Романнан жер-су атауларын теріп жазыңыз:</p>
+                    <textarea class="w-full h-32 p-4 border rounded-xl focus:ring-2 focus:ring-purple-400 outline-none" placeholder="Жайық, Орал, Еділ, Қаратөбе..."></textarea>
+                    <div class="p-4 bg-purple-50 text-purple-800 rounded-xl text-sm italic">
+                        "Сырым батыр көтерілісі негізінен Кіші жүз жерінде, Орал, Ақтөбе өңірлерінде өтті."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Style -->
+        <section id="section-style" class="content-section bg-white rounded-3xl p-8 shadow-xl border border-rose-50">
+            <button onclick="goBack()" class="text-rose-600 font-bold mb-6">← Басты мәзір</button>
+            <h2 class="font-serif text-3xl text-rose-900 mb-6">Сөздік және Автор стилі</h2>
+            <div class="space-y-6 max-w-3xl">
+                <div class="flex items-center gap-6 p-4 bg-rose-50 rounded-2xl">
+                    <div class="flex-1 font-bold text-rose-900">«Қақырғанда қан түкірген»</div>
+                    <div class="flex-1 italic text-gray-600">Өте айбынды, қатал, сесті.</div>
+                    <input type="text" class="flex-1 p-2 border-b-2 border-rose-200 outline-none bg-transparent" placeholder="Өз мысалыңыз...">
+                </div>
+                <div class="flex items-center gap-6 p-4 bg-rose-50 rounded-2xl">
+                    <div class="flex-1 font-bold text-rose-900">«Байлап-матап тастаған»</div>
+                    <div class="flex-1 italic text-gray-600">Еріксіз бағындыру, тырп еткізбеу.</div>
+                    <input type="text" class="flex-1 p-2 border-b-2 border-rose-200 outline-none bg-transparent" placeholder="Өз мысалыңыз...">
+                </div>
+                <div class="flex items-center gap-6 p-4 bg-rose-50 rounded-2xl">
+                    <div class="flex-1 font-bold text-rose-900">«Төбесіне көтерген»</div>
+                    <div class="flex-1 italic text-gray-600">Ерекше құрметтеу, сыйлау.</div>
+                    <input type="text" class="flex-1 p-2 border-b-2 border-rose-200 outline-none bg-transparent" placeholder="Өз мысалыңыз...">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Tab switching logic
+        function showSection(sectionId) {
+            document.getElementById('hub-menu').style.display = 'none';
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + sectionId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            if(sectionId === 'career') initDragAndDrop();
+        }
+
+        function goBack() {
+            document.getElementById('hub-menu').style.display = 'grid';
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        }
+
+        // Bio logic
+        function markCorrect(btn) {
+            btn.classList.add('correct-ans');
+            btn.innerText += " ✅";
+        }
+
+        function checkUni() {
+            const val = document.getElementById('uni-input').value.toLowerCase();
+            if(val.includes('филология')) {
+                document.getElementById('uni-input').classList.add('border-green-500');
+                alert("Дұрыс! Филология факультетін үздік бітірген.");
+            } else {
+                alert("Қайта ойланып көріңіз (Көмек: Тіл білімі мен әдебиет)");
+            }
+        }
+
+        // Career Logic (Drag & Drop)
+        function initDragAndDrop() {
+            const list = document.getElementById('career-list');
+            let draggingItem = null;
+
+            list.addEventListener('dragstart', e => {
+                draggingItem = e.target;
+                e.target.style.opacity = '0.5';
+            });
+
+            list.addEventListener('dragend', e => {
+                draggingItem.style.opacity = '1';
+                draggingItem = null;
+            });
+
+            list.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(list, e.clientY);
+                if (afterElement == null) {
+                    list.appendChild(draggingItem);
+                } else {
+                    list.insertBefore(draggingItem, afterElement);
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.sortable-item:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function checkCareerOrder() {
+            const items = document.querySelectorAll('.sortable-item');
+            const feedback = document.getElementById('career-feedback');
+            let isCorrect = true;
+            
+            items.forEach((item, index) => {
+                if(parseInt(item.dataset.id) !== index + 1) isCorrect = false;
+            });
+
+            feedback.classList.remove('hidden');
+            if(isCorrect) {
+                feedback.className = "flex-1 p-3 rounded-xl bg-green-100 text-green-700 font-bold block";
+                feedback.innerText = "Керемет! Хронологиялық реттілік сақталды.";
+            } else {
+                feedback.className = "flex-1 p-3 rounded-xl bg-red-100 text-red-700 font-bold block";
+                feedback.innerText = "Қателік бар. Мәтінге қайта үңіліңіз.";
+            }
+        }
+
+        // Novel Logic
+        const essayArea = document.getElementById('essay-area');
+        essayArea.addEventListener('input', e => {
+            const words = e.target.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('char-count').innerText = words + " сөз жазылды";
+        });
+
+        function saveAnalysis() {
+            if(essayArea.value.length < 20) {
+                alert("Талдау тым қысқа. Сырымның образын кеңірек ашыңыз.");
+            } else {
+                alert("Талдау сақталды! Өте жақсы жұмыс.");
+            }
+        }
+    </script>
+</body>
+</html>
